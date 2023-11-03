@@ -65,7 +65,6 @@ class MonteCarlo(ThreeDScene):
                 dots_3d.add(Dot3D(radius=DEFAULT_SMALL_DOT_RADIUS, point=ith_position, color=ith_color))
             return dots_3d
 
-
         self.play(Write(explanation))
         self.play(Create(shapes))
         
@@ -80,23 +79,7 @@ class MonteCarlo(ThreeDScene):
         self.play(Write(explanation_1))
         self.wait(0.5)
 
-        # self.play(shapes.animate.shift(LEFT*3),
-        #             line_group.animate.shift(LEFT*3))                                
-        self.play(FadeOut(explanation_1))
-        
-        # self.move_camera(theta=0 * DEGREES)
-        self.wait(2)
-
-        # self.move_camera(phi=-45 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES)
-        self.move_camera(phi=180*DEGREES)
-        self.move_camera(phi=0*DEGREES)
-
-        self.wait(3)
-
-        self.move_camera(theta=0 * DEGREES)
-        self.move_camera(theta=90 * DEGREES)
-        self.move_camera(theta=0*DEGREES)
-        # self.set_camera_orientation(phi=-30 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES) 
+        self.move_camera(phi=-30 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES) 
         self.play(Create(sphere))
         self.play(GrowFromCenter(cube[0]),
                    GrowFromCenter(cube[1]),            
@@ -107,39 +90,8 @@ class MonteCarlo(ThreeDScene):
         self.add_fixed_in_frame_mobjects(tex1)
         self.remove(tex1)
         
-        def right_vector_from_orientation(phi, theta, gamma):
-        # Compute the forward direction based on phi and theta
-            forward = [
-            np.sin(phi) * np.cos(theta),
-            np.sin(phi) * np.sin(theta),
-            np.cos(phi)
-            ]
-
-            forward_skew = np.array([
-                [0, -forward[2], forward[1]],
-                [forward[2], 0, -forward[0]],
-                [-forward[1], forward[0], 0]
-            ])
-
-            right_unrolled = [
-                -np.sin(theta),
-                np.cos(theta),
-                0
-            ]
-
-            I = np.eye(3)
-            rotation_matrix = I + np.sin(gamma) * forward_skew + (1 - np.cos(gamma)) * np.dot(forward_skew, forward_skew)
-
-            right_final = np.dot(rotation_matrix, right_unrolled)
-       
-        
-            return right_final
-        
-        # Compute the 'right' vector
-        right_vec = right_vector_from_orientation(self.camera.phi, self.camera.theta, self.camera.theta)       
-        # 'Move' the camera to the right by moving everything else to the left
-        slide_amount = 2  # For example, to move the camera 2 units to the right
-        self.play(cube.animate.shift(OUT*3*LEFT))
+        self.move_camera(zoom=0.9,frame_center=[3,0.7,-1.5]) 
+        # self.play(cube.animate.shift(OUT*3*LEFT))
 
         # self.play(cube.animate.shift(OUT * LEFT * 20))
         self.play(Write(tex1))
