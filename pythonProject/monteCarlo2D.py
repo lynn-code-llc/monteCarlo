@@ -206,7 +206,8 @@ class MonteCarlo2D(ThreeDScene):
             tex1[2][0],
             tex1[0][-1],         # Pi symbol
             ), 
-            points_and_shapes, lag_ratio=0.6),          
+            points_and_shapes, 
+            FadeOut(points),lag_ratio=0.6),          
         run_time=2)
 
         # self.play(FadeOut(points))
@@ -247,10 +248,10 @@ class MonteCarlo3D(ThreeDScene):
 
         shapes = VGroup(circle, square)
 
-        tex1 = MathTex(r'\left(\frac{\text {area of sphere}}{\text {area of cube}}\right)=', r'\frac{\pi r^{3}}{',r'(2 r)^{3}}')
+        tex1 = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'(2 r)^{3}}')
         # tex1.next_to(square, buff=LARGE_BUFF,aligned_edge=UP)
         tex1.shift(RIGHT*3)
-        tex2 = MathTex(r'\left(\frac{\text {area of sphere}}{\text {area of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}')
+        tex2 = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}')
         black_square = Square(0.6, 
                                 color=BLACK,         
                             fill_opacity=1).next_to(tex1, RIGHT)
@@ -291,9 +292,12 @@ class MonteCarlo3D(ThreeDScene):
                                 FadeIn(two_r)))
         self.wait()
         self.play(Write(explanation_1))
-        self.wait(0.5)
+        self.wait()
+        self.play(FadeOut(explanation_1))
 
-        self.move_camera(phi=-30 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES) 
+        # self.move_camera(phi=-30 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES) 
+        self.move_camera(phi=-40 * DEGREES, theta=-160 * DEGREES, gamma=-80 * DEGREES) 
+        
         self.play(Create(sphere))
         self.play(GrowFromCenter(cube[0]),
                 GrowFromCenter(cube[1]),            
@@ -301,9 +305,9 @@ class MonteCarlo3D(ThreeDScene):
                 GrowFromCenter(cube[3]),
                 GrowFromCenter(cube[4]),
                 GrowFromCenter(cube[5]))
-        self.add_fixed_in_frame_mobjects(tex1)
-        self.remove(tex1)
-        
+        self.add_fixed_in_frame_mobjects(tex1,explanation,explanation_2,explanation_3,explanation_4, line1, line2, cdot)
+        self.remove(tex1, explanation,explanation_2,explanation_3,explanation_4, line1, line2, cdot)
+        self.wait()
         self.move_camera(zoom=0.9,frame_center=[3,0.7,-1.5]) 
         # self.play(cube.animate.shift(OUT*3*LEFT))
 
@@ -332,7 +336,7 @@ class MonteCarlo3D(ThreeDScene):
                             tex1[1][0].animate.next_to(tex1[0],RIGHT, buff=SMALL_BUFF),
                             FadeOut(tex1[1][3], black_square)), run_time=2)
         self.wait()
-        nums = MathTex(r'\left(\frac{\text {pts in circle}}{\text {total pts in square}}\right)',                                                            
+        nums = MathTex(r'\left(\frac{\text {pts in sphere}}{\text {total pts in cube}}\right)',                                                            
                             font_size=48).next_to(cdot, buff=SMALL_BUFF)
         nums[0][1:12].set_color(RED)
         nums[0][13:-1].set_color_by_gradient(RED,BLUE)
