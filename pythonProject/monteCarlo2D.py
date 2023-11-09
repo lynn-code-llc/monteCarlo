@@ -6,7 +6,7 @@ class MonteCarlo(ThreeDScene):
 
     def construct(self):
 
-        num_of_points = 200
+        num_of_points = 3
 
         opening_text = Text('Monte Carlo Simulations are a broad class of computational algorithms \nthat rely on repeated random sampling to obtain numerical results.',font_size=30)
         opening_text1 = Text('The underlying concept is to use randomness to solve problems \n that might be deterministic in principle.',font_size=30)
@@ -75,13 +75,14 @@ class MonteCarlo(ThreeDScene):
                     square_count += 1
                 ratio = i if not i else circle_count/(square_count + circle_count) 
 
+                dots_2d.add(Dot(radius=DEFAULT_SMALL_DOT_RADIUS,
+                                point=ith_position, 
+                                color=ith_color))
+
                 all_values.add(VGroup(Integer(circle_count, color=RED),
                                       Integer(circle_count, color=RED),
                                       Integer(square_count, color=BLUE),
                                       DecimalNumber(4 * ratio, num_decimal_places=4, color=YELLOW)))
-                dots_2d.add(Dot(radius=DEFAULT_SMALL_DOT_RADIUS,
-                                point=ith_position, 
-                                color=ith_color))
             return (dots_2d, all_values)
 
         positions_3d = square.side_length * np.random.random_sample((num_of_points, 3)) - square.side_length / 2
@@ -125,7 +126,6 @@ class MonteCarlo(ThreeDScene):
 
         self.add(black_square)        
         
-
         self.play(Transform(tex1[2][1], tex2[2][0]),
                  Transform(tex1[2:],tex2[2:]))
         self.wait(0.5)
@@ -134,8 +134,7 @@ class MonteCarlo(ThreeDScene):
         self.play(FadeOut(line1,line2, tex1[1][1:3], tex1[2][2:], r, two_r, radius, ref_line, reverse_line),
                             black_square.animate.shift(LEFT*0.75))
         self.wait(0.5)
-
-        
+     
 
         self.play(LaggedStart(tex1[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
                             FadeIn(cdot),
@@ -169,10 +168,6 @@ class MonteCarlo(ThreeDScene):
             values[i][2].move_to(initial_nums[0][5])
             values[i][3].move_to(initial_nums[0][7:])
 
-
-        # self.add(initial_nums)
-        # self.add(index_labels(initial_nums[0]))
-        
         self.play(ReplacementTransform(nums[0][0], initial_nums[0][0]),
                   ReplacementTransform(nums[0][1:12], initial_nums[0][1]),
                   ReplacementTransform(nums[0][12], initial_nums[0][2]),
@@ -187,32 +182,39 @@ class MonteCarlo(ThreeDScene):
         self.wait()
         self.play(Write(explanation_4))
         self.wait()
-        # initial_nums[0][1].become(values[0][0]
-        # initial_nums[0][3].become(values[0][1])
-        # initial_nums[0][5].become(values[0][2])
+
         self.play(FadeOut(explanation_4))
         a = AnimationGroup(FadeOut(initial_nums[0][1], initial_nums[0][3], initial_nums[0][5], initial_nums[0][7:], run_time=0.1),
                                 ShowIncreasingSubsets(points.shift(LEFT*3)),
                                 ShowSubmobjectsOneByOne(values), run_time=10)
         self.play(LaggedStart(a, Write(explanation_5), lag_ratio=0.3))
 
-        self.wait()
-        self.play(FadeOut(*self.mobjects))
-        self.play(Write(promo)) 
-        self.wait()
-        self.play(Rotate(square, 45, axis=UP))
-        self.move_camera(phi=-45 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES)
-        self.set_camera_orientation(phi=-30 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES) 
-        self.play(Create(sphere))
-        self.play(GrowFromCenter(cube[0]),
-                   GrowFromCenter(cube[1]),            
-                   GrowFromCenter(cube[2]),
-                   GrowFromCenter(cube[3]),
-                   GrowFromCenter(cube[4]),
-                   GrowFromCenter(cube[5]))
-        self.play(ShowIncreasingSubsets(gen_3d_points().shift(LEFT*2)), run_time=5)
-        self.wait()
+        self.wait(2)
+        # self.play(FadeOut(explanation_5, nums, cdot,  tex1[0][-1] ))
 
+        points_and_shapes = AnimationGroup(points.animate.shift(RIGHT*3),
+                                           shapes.animate.shift(RIGHT*3))
+
+        self.play(LaggedStart(FadeOut(
+            explanation_5,
+            initial_nums[0][0],  # Left parenthesis and fraction bar
+            initial_nums[0][2],  # Plus symbol
+            initial_nums[0][4],  # Right parenthesis
+            initial_nums[0][6],  # Approximation symbol
+            cdot,                # Multiplication dot
+            values[-1],
+            tex1[2][0],
+            tex1[0][-1],         # Pi symbol
+            ), 
+            points_and_shapes, lag_ratio=0.6),          
+        run_time=2)
+
+        # self.play(FadeOut(points))
+
+        # mobjects_not_fading = VGroup(points, shapes)
+        # self.play(FadeOut(self.mobjects - mobjects_not_fading))
+  
+        self.wait()
 
 x = MonteCarlo()
 x.render()

@@ -128,7 +128,7 @@ class MonteCarlo(ThreeDScene):
         self.play(FadeOut(tex1[0][0:-1]), FadeIn(nums),
                     Transform(tex1[0][-1], (approx_equal.next_to(nums, buff=SMALL_BUFF))),
                     tex1[1][0].animate.next_to(approx_equal))
-        
+
         self.wait(2)
         initial_nums = MathTex(r'\left(\,\frac{\qquad0\qquad}{0\,\,\,\,+\,\,\,0}\,\right) 0.0000').next_to(cdot)
         initial_nums[0][1].set_color(RED)
