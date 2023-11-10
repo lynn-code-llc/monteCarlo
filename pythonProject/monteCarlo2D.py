@@ -58,7 +58,6 @@ class MonteCarlo2D(ThreeDScene):
         dots_2d = VGroup()
         all_values = VGroup()
         
-
         def gen_2d_points():
             circle_count = 0
             square_count = 0
@@ -85,20 +84,6 @@ class MonteCarlo2D(ThreeDScene):
                                       DecimalNumber(4 * ratio, num_decimal_places=4, color=YELLOW)))
             return (dots_2d, all_values)
 
-        positions_3d = square.side_length * np.random.random_sample((num_of_points, 3)) - square.side_length / 2
-        dots_3d = VGroup()
-
-        def gen_3d_points():
-            for i in range(num_of_points): 
-                ith_position = positions_3d[i, :]
-                ith_color = RED
-                dist_from_origin = np.linalg.norm(ith_position - ORIGIN)
-                if dist_from_origin > circle.radius:
-                    ith_color = BLUE
-                dots_3d.add(Dot3D(radius=DEFAULT_SMALL_DOT_RADIUS, point=ith_position, color=ith_color))
-            return dots_3d
-
-        
         self.play(Write(explanation))
         self.play(Create(shapes))
         
@@ -221,7 +206,7 @@ class MonteCarlo3D(ThreeDScene):
 
     def construct(self):
 
-        num_of_points = 25
+        num_of_points = 250
 
         circle = Circle(radius=2)
         square = Square(side_length=4, color=BLUE_C).move_to(circle)
@@ -240,8 +225,6 @@ class MonteCarlo3D(ThreeDScene):
                             font_size=48).next_to(cdot, buff=SMALL_BUFF)
         vol_over_vol_simplified = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}').move_to(vol_over_vol)
         
-        equals_location = vol_over_vol[0][-1].get_center()
-
         line1 = Line(vol_over_vol[1][2].get_corner(UR), vol_over_vol[1][1].get_corner(DL), color=YELLOW)
         line2 = Line(vol_over_vol_simplified[-1].get_corner(UR), vol_over_vol_simplified[-1][1].get_corner(DL), color=YELLOW)
         black_square = Square(0.6, 
@@ -272,23 +255,40 @@ class MonteCarlo3D(ThreeDScene):
         #                     fill_opacity=1).next_to(vol_over_vol, RIGHT)
         # vol_over_vol_simplified.move_to(vol_over_vol)
 
-        zeros = np.zeros((num_of_points, 1))
-        positions_2d = square.side_length * np.random.random_sample((num_of_points, 2)) - square.side_length / 2
-        positions_2d = np.append(positions_2d, zeros, axis=1)
-        
+        # zeros = np.zeros((num_of_points, 1))
         positions_3d = square.side_length * np.random.random_sample((num_of_points, 3)) - square.side_length / 2
+        # positions_3d = np.append(positions_3d, zeros, axis=1)
+        
         dots_3d = VGroup()
+        all_values = VGroup()
 
         def gen_3d_points():
+            sphere_count = 0
+            cube_count = 0
+
             for i in range(num_of_points): 
                 ith_position = positions_3d[i, :]
                 ith_color = RED
                 dist_from_origin = np.linalg.norm(ith_position - ORIGIN)
                 if dist_from_origin > circle.radius:
                     ith_color = BLUE
-                dots_3d.add(Dot3D(radius=DEFAULT_SMALL_DOT_RADIUS, point=ith_position, color=ith_color))
-            return dots_3d
+                if i and ith_color == RED:
+                    sphere_count += 1
+                elif i:
+                    cube_count += 1
+                ratio = sphere_count / (cube_count + sphere_count) if (cube_count + sphere_count) > 0 else 0
 
+                dots_3d.add(Dot3D(radius=DEFAULT_SMALL_DOT_RADIUS,
+                                point=ith_position, 
+                                color=ith_color))
+
+                all_values.add(VGroup(Integer(sphere_count, color=RED),
+                                      Integer(sphere_count, color=RED),
+                                      Integer(cube_count, color=BLUE),
+                                      DecimalNumber(8 * ratio, num_decimal_places=4, color=YELLOW)))
+            return (dots_3d, all_values)
+
+        
         self.add(shapes)
         self.play(Write(explanation))
                 
@@ -376,6 +376,7 @@ class MonteCarlo3D(ThreeDScene):
         #           FadeIn(approx)
         #          )
         
+   
         self.play(ReplacementTransform(vol_over_vol[0][0],pts_over_pts[0][0]),
                   ReplacementTransform(vol_over_vol[0][1:15], pts_over_pts[0][1:12]),
                   ReplacementTransform(vol_over_vol[0][15], pts_over_pts[0][12]),
@@ -384,6 +385,7 @@ class MonteCarlo3D(ThreeDScene):
                   )
 
         self.wait(2)
+
         initial_nums_all_zeros[0][1].set_color(RED)
         initial_nums_all_zeros[0][3].set_color(RED)
         initial_nums_all_zeros[0][5].set_color(BLUE)
@@ -413,6 +415,23 @@ class MonteCarlo3D(ThreeDScene):
 
         self.play(FadeOut(explanation_4))
 
+        points3d, values3d = gen_3d_points()
+
+        for i in range(num_of_points):
+            values3d[i][0].move_to(initial_nums_all_zeros[0][1])
+            values3d[i][1].move_to(initial_nums_all_zeros[0][3])
+            values3d[i][2].move_to(initial_nums_all_zeros[0][5])
+            values3d[i][3].move_to(initial_nums_all_zeros[0][7:])
+
+        self.add_fixed_in_frame_mobjects(values3d)
+        self.remove(values3d)
+
+        a = AnimationGroup(FadeOut(initial_nums_all_zeros[0][1], initial_nums_all_zeros[0][3], initial_nums_all_zeros[0][5], initial_nums_all_zeros[0][7:], run_time=0.1),
+                                ShowIncreasingSubsets(points3d),
+                                ShowSubmobjectsOneByOne(values3d), run_time=10)
+        
+        self.play(LaggedStart(a, Write(explanation_5), lag_ratio=0.3))
+
         self.wait()
         self.play(FadeOut(*self.mobjects))
         self.wait()
@@ -422,7 +441,7 @@ class MonteCarlo3D(ThreeDScene):
 
 class CombinedScene(ThreeDScene):
         def construct(self):
-            # MonteCarlo2D.construct(self)
+            MonteCarlo2D.construct(self)
             MonteCarlo3D.construct(self)
 
 CombinedScene().render()
