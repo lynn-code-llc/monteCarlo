@@ -1,10 +1,13 @@
 
 from manim import *
 import numpy as np
+import time
 
 class MonteCarlo2D(ThreeDScene):
 
     def construct(self):
+        
+        start_time = time.time()
 
         num_of_points = 3
 
@@ -202,11 +205,15 @@ class MonteCarlo2D(ThreeDScene):
   
         self.wait()
 
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"\033[94mRender time: {elapsed_time:.2f} seconds")
+
 class MonteCarlo3D(ThreeDScene):
 
     def construct(self):
 
-        num_of_points = 250
+        num_of_points = 5
 
         circle = Circle(radius=2)
         square = Square(side_length=4, color=BLUE_C).move_to(circle)
@@ -218,21 +225,31 @@ class MonteCarlo3D(ThreeDScene):
         explanation_4 = MathTex(r'\text{Evaluating the full expression allows us to approximate } \pi!').next_to(circle, UP*3)
         explanation_5 = Paragraph('The more points we plot \n the more accurate our approximation becomes!', font_size=30, alignment='center').next_to(circle,UP*3)
 
-        vol_over_vol = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'(2 r)^{3}}').shift(RIGHT*3.2)
-        cdot = MathTex('\cdot').next_to(vol_over_vol,LEFT, buff=SMALL_BUFF)
+        vol_over_vol_text = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=').shift(RIGHT*3.2)
+        vol_over_vol_num = MathTex(r'\frac{4}{3}\pi r^3').shift(RIGHT*3.2)
+        vol_over_vol_den = MathTex(r'(2r)^{3}')
+
+        vol_over_vol_text = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=')
+        vol_over_vol_num = MathTex(r'\frac{4}{3}\pi r^3').next_to(vol_over_vol_text).shift(UP*0.65)
+        vol_over_vol_den = MathTex(r'(2r)^{3}').next_to(vol_over_vol_num, DOWN)
+        frac_line = Line(vol_over_vol_den.get_corner(UR), vol_over_vol_den.get_corner(UL)).shift(UP*0.1).set_opacity(0.65)
+
+        eq = VGroup(vol_over_vol_num, vol_over_vol_den,vol_over_vol_text, frac_line).shift(RIGHT*3.2)
+
+        cdot = MathTex('\cdot').next_to(vol_over_vol_text,LEFT, buff=SMALL_BUFF)
         initial_nums_all_zeros = MathTex(r'\left(\,\frac{\qquad0\qquad}{0\,\,\,\,+\,\,\,0}\,\right) 0.0000').next_to(cdot, RIGHT)
         pts_over_pts = MathTex(r'\left(\frac{\text {pts in sphere}}{\text {total pts in cube}}\right)',                                                            
                             font_size=48).next_to(cdot, buff=SMALL_BUFF)
-        vol_over_vol_simplified = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}').move_to(vol_over_vol)
+        vol_over_vol_simplified = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}').move_to(vol_over_vol_text)
         
-        line1 = Line(vol_over_vol[1][2].get_corner(UR), vol_over_vol[1][1].get_corner(DL), color=YELLOW)
-        line2 = Line(vol_over_vol_simplified[-1].get_corner(UR), vol_over_vol_simplified[-1][1].get_corner(DL), color=YELLOW)
+        r_cancel_num = Line(vol_over_vol_text[1][2].get_corner(UR), vol_over_vol_text[1][1].get_corner(DL), color=YELLOW)
+        r_cancel_den = Line(vol_over_vol_simplified[-1].get_corner(UR), vol_over_vol_simplified[-1][1].get_corner(DL), color=YELLOW)
         black_square = Square(0.6, 
                             color=BLACK,         
-                            fill_opacity=1).next_to(vol_over_vol, RIGHT)
+                            fill_opacity=1).next_to(vol_over_vol_text, RIGHT)
         
-        self.add_fixed_in_frame_mobjects(vol_over_vol, cdot, initial_nums_all_zeros, pts_over_pts, explanation, explanation_2, explanation_3, explanation_4, line1, line2, black_square)
-        self.remove(vol_over_vol, cdot, initial_nums_all_zeros, pts_over_pts, explanation,explanation_2,explanation_3,explanation_4, line1, line2,  black_square)
+        self.add_fixed_in_frame_mobjects(vol_over_vol_text, cdot, initial_nums_all_zeros, pts_over_pts, explanation, explanation_2, explanation_3, explanation_4, r_cancel_num, r_cancel_den, black_square)
+        self.remove(vol_over_vol_text, cdot, initial_nums_all_zeros, pts_over_pts, explanation,explanation_2,explanation_3,explanation_4, r_cancel_num, r_cancel_den,  black_square)
         
         radius = Line(circle.get_center(), circle.get_edge_center(RIGHT))
         r = MathTex('r').next_to(radius, UP)
@@ -322,32 +339,32 @@ class MonteCarlo3D(ThreeDScene):
 
 
         # self.play(cube.animate.shift(OUT * LEFT * 20))
-        self.play(Write(vol_over_vol))
+        self.play(Write(vol_over_vol_text))
         self.wait()
         self.play(Write(explanation_2))
         self.wait()
         self.play(FadeOut(explanation_2))
-        self.play(Indicate(vol_over_vol[2][0]),Indicate(vol_over_vol[2][3:]),run_time=2)
+        self.play(Indicate(vol_over_vol_text[2][0]),Indicate(vol_over_vol_text[2][3:]),run_time=2)
 
         # self.add_fixed_in_frame_mobjects(black_square)
         # self.remove(black_square)      
 
-        self.play(Transform(vol_over_vol[2][1], vol_over_vol_simplified[2][0]),
-                Transform(vol_over_vol[2:],vol_over_vol_simplified[2:]))
+        self.play(Transform(vol_over_vol_text[2][1], vol_over_vol_simplified[2][0]),
+                Transform(vol_over_vol_text[2:],vol_over_vol_simplified[2:]))
         self.wait(0.5)
-        self.play(Create(line1),Create(line2))
+        self.play(Create(r_cancel_num),Create(r_cancel_den))
         self.wait(0.5)
-        self.play(FadeOut(line1,line2, vol_over_vol[1][1:3], vol_over_vol[2][2:], r, two_r, radius, ref_line, reverse_line),
+        self.play(FadeOut(r_cancel_num,r_cancel_den, vol_over_vol_text[1][1:3], vol_over_vol_text[2][2:], r, two_r, radius, ref_line, reverse_line),
                             black_square.animate.shift(LEFT*0.75))
         self.wait(0.5)
 
         # Animate 8 vol_over_vol[2][0] to left side of equation.
         # Fade in cdot
         # Animate pi (vol_over_vol[1][0]) to right of equation
-        self.play(LaggedStart(vol_over_vol[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
+        self.play(LaggedStart(vol_over_vol_text[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
                             FadeIn(cdot),
-                            vol_over_vol[1][0].animate.next_to(vol_over_vol[0],RIGHT, buff=MED_SMALL_BUFF),
-                            LaggedStart(FadeOut(vol_over_vol[1][3]),
+                            vol_over_vol_text[1][0].animate.next_to(vol_over_vol_text[0],RIGHT, buff=MED_SMALL_BUFF),
+                            LaggedStart(FadeOut(vol_over_vol_text[1][3]),
                                         FadeOut(black_square), run_time=2, lag_ratio=1)
                             ), runtime=2)
                             
@@ -377,11 +394,11 @@ class MonteCarlo3D(ThreeDScene):
         #          )
         
    
-        self.play(ReplacementTransform(vol_over_vol[0][0],pts_over_pts[0][0]),
-                  ReplacementTransform(vol_over_vol[0][1:15], pts_over_pts[0][1:12]),
-                  ReplacementTransform(vol_over_vol[0][15], pts_over_pts[0][12]),
-                  ReplacementTransform(vol_over_vol[0][16:28], pts_over_pts[0][13:27]),
-                  ReplacementTransform(vol_over_vol[0][28], pts_over_pts[0][27]),
+        self.play(ReplacementTransform(vol_over_vol_text[0][0],pts_over_pts[0][0]),
+                  ReplacementTransform(vol_over_vol_text[0][1:15], pts_over_pts[0][1:12]),
+                  ReplacementTransform(vol_over_vol_text[0][15], pts_over_pts[0][12]),
+                  ReplacementTransform(vol_over_vol_text[0][16:28], pts_over_pts[0][13:27]),
+                  ReplacementTransform(vol_over_vol_text[0][28], pts_over_pts[0][27]),
                   )
 
         self.wait(2)
@@ -400,13 +417,13 @@ class MonteCarlo3D(ThreeDScene):
                 ReplacementTransform(pts_over_pts[0][13:21], initial_nums_all_zeros[0][3]),
                 ReplacementTransform(pts_over_pts[0][21:-1], initial_nums_all_zeros[0][5]),
                 ReplacementTransform(pts_over_pts[0][-1], initial_nums_all_zeros[0][6]),
-                FadeOut(vol_over_vol[1][0]),
-                FadeOut(vol_over_vol[0][29]),
+                FadeOut(vol_over_vol_text[1][0]),
+                FadeOut(vol_over_vol_text[0][29]),
                 FadeIn(approx.next_to(initial_nums_all_zeros[0][7], LEFT, buff=MED_SMALL_BUFF)),
                 FadeIn(initial_nums_all_zeros[0][7:]),
                 FadeIn(initial_nums_all_zeros[0][4]),
                 cdot.animate.next_to(initial_nums_all_zeros, LEFT, buff=SMALL_BUFF*1.7),
-                vol_over_vol[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
+                vol_over_vol_text[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
                 # vol_over_vol[0][-1].animate.next_to(initial_nums_all_zeros[0][6]),
                 )
         
@@ -421,7 +438,7 @@ class MonteCarlo3D(ThreeDScene):
             values3d[i][0].move_to(initial_nums_all_zeros[0][1])
             values3d[i][1].move_to(initial_nums_all_zeros[0][3])
             values3d[i][2].move_to(initial_nums_all_zeros[0][5])
-            values3d[i][3].move_to(initial_nums_all_zeros[0][7:])
+            values3d[i][3].move_to(initial_nums_all_zeros[0][7:])  
 
         self.add_fixed_in_frame_mobjects(values3d)
         self.remove(values3d)
@@ -435,8 +452,9 @@ class MonteCarlo3D(ThreeDScene):
         self.wait()
         self.play(FadeOut(*self.mobjects))
         self.wait()
+
         
-        # self.play(ShowIncreasingSubsets(gen_3d_points().shift(LEFT*2)), run_time=5)
+        # self.play(ShowIncreasingSubsets(gen_3d_points().shift(LEFT*2)
         self.wait()
 
 class CombinedScene(ThreeDScene):
