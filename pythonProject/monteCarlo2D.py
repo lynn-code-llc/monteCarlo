@@ -9,7 +9,7 @@ class MonteCarlo2D(ThreeDScene):
         
         start_time = time.time()
 
-        num_of_points = 3
+        num_of_points = 1
 
         opening_text = Text('Monte Carlo Simulations are a broad class of computational algorithms \nthat rely on repeated random sampling to obtain numerical results.',font_size=30)
         opening_text1 = Text('The underlying concept is to use randomness to solve problems \n that might be deterministic in principle.',font_size=30)
@@ -213,7 +213,7 @@ class MonteCarlo3D(ThreeDScene):
 
     def construct(self):
 
-        num_of_points = 5
+        num_of_points = 1
 
         circle = Circle(radius=2)
         square = Square(side_length=4, color=BLUE_C).move_to(circle)
@@ -225,31 +225,111 @@ class MonteCarlo3D(ThreeDScene):
         explanation_4 = MathTex(r'\text{Evaluating the full expression allows us to approximate } \pi!').next_to(circle, UP*3)
         explanation_5 = Paragraph('The more points we plot \n the more accurate our approximation becomes!', font_size=30, alignment='center').next_to(circle,UP*3)
 
-        vol_over_vol_text = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=').shift(RIGHT*3.2)
-        vol_over_vol_num = MathTex(r'\frac{4}{3}\pi r^3').shift(RIGHT*3.2)
-        vol_over_vol_den = MathTex(r'(2r)^{3}')
+        ## Equations and their simplifications ########################################################################################################
 
         vol_over_vol_text = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=')
-        vol_over_vol_num = MathTex(r'\frac{4}{3}\pi r^3').next_to(vol_over_vol_text).shift(UP*0.65)
-        vol_over_vol_den = MathTex(r'(2r)^{3}').next_to(vol_over_vol_num, DOWN)
-        frac_line = Line(vol_over_vol_den.get_corner(UR), vol_over_vol_den.get_corner(UL)).shift(UP*0.1).set_opacity(0.65)
 
-        eq = VGroup(vol_over_vol_num, vol_over_vol_den,vol_over_vol_text, frac_line).shift(RIGHT*3.2)
+        # Numerator and simplifications
+        vol_over_vol_num_43pir3 = MathTex(r'\frac{4}{3}\pi r^3').next_to(vol_over_vol_text).shift(UP*0.65)
+        vol_over_vol_num_43pi = MathTex(r'\frac{4}{3}\pi').move_to(vol_over_vol_num_43pir3)
+        vol_over_vol_num_4pi = MathTex(r'4\pi').move_to(vol_over_vol_num_43pir3).shift(DOWN*MED_SMALL_BUFF)
+        vol_over_vol_num_pi = MathTex(r'\pi').move_to(vol_over_vol_num_4pi).shift(DOWN*SMALL_BUFF)
+
+        # Denominator and simplifications
+        vol_over_vol_den_2r3 = MathTex(r'(2r)^{3}').next_to(vol_over_vol_num_43pir3, DOWN)
+        vol_over_vol_den_8r3 = MathTex(r'8r^{3}').move_to(vol_over_vol_den_2r3)
+        vol_over_vol_den_8 = MathTex(r'8').move_to(vol_over_vol_den_2r3)
+        vol_over_vol_den_3x8 = MathTex(r'3\cdot8').move_to(vol_over_vol_den_2r3)
+        vol_over_vol_den_3x2 = MathTex(r'3\cdot2').move_to(vol_over_vol_den_2r3)
+        vol_over_vol_den_6 = MathTex(r'6').move_to(vol_over_vol_den_2r3)
+
+        frac_line = Line(vol_over_vol_den_2r3.get_corner(UR), vol_over_vol_den_2r3.get_corner(UL)).shift(UP*0.1).set_opacity(0.65)
+
+        eq = VGroup(vol_over_vol_num_43pir3,
+                    vol_over_vol_num_43pi,
+                    vol_over_vol_num_4pi,
+                    vol_over_vol_num_pi,
+                    vol_over_vol_den_2r3,
+                    vol_over_vol_den_8r3,
+                    vol_over_vol_den_8,
+                    vol_over_vol_den_3x8,
+                    vol_over_vol_den_3x2,
+                    vol_over_vol_den_6,
+                    vol_over_vol_text,
+                    frac_line)
+        eq.shift(RIGHT*3.2)
 
         cdot = MathTex('\cdot').next_to(vol_over_vol_text,LEFT, buff=SMALL_BUFF)
+        ################################################################################################################################################
+
         initial_nums_all_zeros = MathTex(r'\left(\,\frac{\qquad0\qquad}{0\,\,\,\,+\,\,\,0}\,\right) 0.0000').next_to(cdot, RIGHT)
         pts_over_pts = MathTex(r'\left(\frac{\text {pts in sphere}}{\text {total pts in cube}}\right)',                                                            
                             font_size=48).next_to(cdot, buff=SMALL_BUFF)
-        vol_over_vol_simplified = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}').move_to(vol_over_vol_text)
+        # vol_over_vol_simplified = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}').move_to(vol_over_vol_text)
         
-        r_cancel_num = Line(vol_over_vol_text[1][2].get_corner(UR), vol_over_vol_text[1][1].get_corner(DL), color=YELLOW)
-        r_cancel_den = Line(vol_over_vol_simplified[-1].get_corner(UR), vol_over_vol_simplified[-1][1].get_corner(DL), color=YELLOW)
+        cancel_num_r = Line(vol_over_vol_num_43pir3[0][5].get_corner(UR), vol_over_vol_num_43pir3[0][4].get_corner(DL), color=YELLOW)
+        cancel_den_r = Line(vol_over_vol_den_8r3[0][2].get_corner(UR), vol_over_vol_den_8r3[0][1].get_corner(DL), color=YELLOW)
+        cancel_num_4 = Line(vol_over_vol_num_4pi[0][0].get_corner(UR), vol_over_vol_num_4pi[0][0].get_corner(DL), color=YELLOW)
+        cancel_den_8 = Line(vol_over_vol_den_3x8[0][2].get_corner(UR), vol_over_vol_den_3x8[0][2].get_corner(DL), color=YELLOW)
+
         black_square = Square(0.6, 
                             color=BLACK,         
                             fill_opacity=1).next_to(vol_over_vol_text, RIGHT)
         
-        self.add_fixed_in_frame_mobjects(vol_over_vol_text, cdot, initial_nums_all_zeros, pts_over_pts, explanation, explanation_2, explanation_3, explanation_4, r_cancel_num, r_cancel_den, black_square)
-        self.remove(vol_over_vol_text, cdot, initial_nums_all_zeros, pts_over_pts, explanation,explanation_2,explanation_3,explanation_4, r_cancel_num, r_cancel_den,  black_square)
+        self.add_fixed_in_frame_mobjects(vol_over_vol_text,
+                                         vol_over_vol_num_43pir3,
+                                         vol_over_vol_den_2r3,
+                                         vol_over_vol_den_8r3,
+                                         vol_over_vol_num_43pi,
+                                         vol_over_vol_den_8,
+                                         vol_over_vol_num_4pi,
+                                         vol_over_vol_den_3x8,
+                                         vol_over_vol_num_pi,
+                                         vol_over_vol_den_3x2,
+                                         vol_over_vol_den_6,
+                                         frac_line,
+                                         cancel_den_r,
+                                         cancel_num_4,
+                                         cancel_den_8,
+                                         cancel_num_4,
+                                         cdot,
+                                         initial_nums_all_zeros,
+                                         pts_over_pts,
+                                         explanation,
+                                         explanation_2,
+                                         explanation_3,
+                                         explanation_4, 
+                                         explanation_5,
+                                         cancel_num_r, 
+                                         cancel_den_r, 
+                                         black_square)
+        self.remove(vol_over_vol_text,
+                    vol_over_vol_num_43pir3,
+                    vol_over_vol_num_43pi,
+                    vol_over_vol_num_4pi,
+                    vol_over_vol_num_pi,
+                    vol_over_vol_den_2r3,
+                    vol_over_vol_den_8r3,
+                    vol_over_vol_den_8,
+                    vol_over_vol_den_3x8,
+                    vol_over_vol_den_3x2,
+                    vol_over_vol_den_6,
+                    frac_line,
+                    cancel_den_r,
+                    cancel_num_4,
+                    cancel_den_8,
+                    cancel_num_4,
+                    cdot,
+                    initial_nums_all_zeros,
+                    pts_over_pts,
+                    explanation,
+                    explanation_2,
+                    explanation_3,
+                    explanation_4,
+                    explanation_5,
+                    cancel_num_r,
+                    cancel_den_r, 
+                    black_square)
         
         radius = Line(circle.get_center(), circle.get_edge_center(RIGHT))
         r = MathTex('r').next_to(radius, UP)
@@ -340,32 +420,57 @@ class MonteCarlo3D(ThreeDScene):
 
         # self.play(cube.animate.shift(OUT * LEFT * 20))
         self.play(Write(vol_over_vol_text))
+        self.play(Write(vol_over_vol_num_43pir3))
+        self.play(Write(frac_line))
+        self.play(Write(vol_over_vol_den_2r3))
         self.wait()
         self.play(Write(explanation_2))
         self.wait()
         self.play(FadeOut(explanation_2))
-        self.play(Indicate(vol_over_vol_text[2][0]),Indicate(vol_over_vol_text[2][3:]),run_time=2)
 
         # self.add_fixed_in_frame_mobjects(black_square)
-        # self.remove(black_square)      
+        # self.remove(black_square)  
 
-        self.play(Transform(vol_over_vol_text[2][1], vol_over_vol_simplified[2][0]),
-                Transform(vol_over_vol_text[2:],vol_over_vol_simplified[2:]))
-        self.wait(0.5)
-        self.play(Create(r_cancel_num),Create(r_cancel_den))
-        self.wait(0.5)
-        self.play(FadeOut(r_cancel_num,r_cancel_den, vol_over_vol_text[1][1:3], vol_over_vol_text[2][2:], r, two_r, radius, ref_line, reverse_line),
-                            black_square.animate.shift(LEFT*0.75))
-        self.wait(0.5)
+                         
+        self.play(AnimationGroup(Indicate(vol_over_vol_den_2r3[0][0]),
+                                Indicate(vol_over_vol_den_2r3[0][3]),
+                                Indicate(vol_over_vol_den_2r3[0][4])), run_time=2)
+        self.wait(1)
+        self.play(ReplacementTransform(vol_over_vol_den_2r3, vol_over_vol_den_8r3))
+        self.play(AnimationGroup(Indicate(vol_over_vol_num_43pir3[0][4]),
+                                Indicate(vol_over_vol_num_43pir3[0][5]),
+                                Indicate(vol_over_vol_den_8r3[0][1:]), run_time=2))
+        self.wait(1)
+        self.play(Create(cancel_num_r),Create(cancel_den_r))
+        self.wait(1)
+        self.play(ReplacementTransform(vol_over_vol_num_43pir3, vol_over_vol_num_43pi),
+                  ReplacementTransform(vol_over_vol_den_8r3, vol_over_vol_den_8),
+                  FadeOut(cancel_num_r, cancel_den_r))
+        self.wait(1)
+        self.play(Indicate(vol_over_vol_num_43pi[0][0:3]))
+        self.wait(1)
+        self.play(ReplacementTransform(vol_over_vol_num_43pi, vol_over_vol_num_4pi),
+                  ReplacementTransform(vol_over_vol_den_8,vol_over_vol_den_3x8))
+        self.wait(1)
+        self.play(Create(cancel_num_4),Create(cancel_den_8))
+        self.wait(1)
+        self.play(ReplacementTransform(vol_over_vol_num_4pi, vol_over_vol_num_pi),
+                  ReplacementTransform(vol_over_vol_den_3x8,vol_over_vol_den_3x2),
+                  FadeOut(cancel_num_4, cancel_den_8))
+        self.wait(1)
+        self.play(Indicate(vol_over_vol_den_3x2))
+        self.wait(1)
+        self.play(ReplacementTransform(vol_over_vol_den_3x2, vol_over_vol_den_6))
+        self.wait(1) 
 
-        # Animate 8 vol_over_vol[2][0] to left side of equation.
+
+        # Animate 6 to left side of equation.
         # Fade in cdot
-        # Animate pi (vol_over_vol[1][0]) to right of equation
-        self.play(LaggedStart(vol_over_vol_text[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
+        # Animate pi to right of equation
+        self.play(LaggedStart(vol_over_vol_den_6.animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
                             FadeIn(cdot),
-                            vol_over_vol_text[1][0].animate.next_to(vol_over_vol_text[0],RIGHT, buff=MED_SMALL_BUFF),
-                            LaggedStart(FadeOut(vol_over_vol_text[1][3]),
-                                        FadeOut(black_square), run_time=2, lag_ratio=1)
+                            vol_over_vol_num_pi.animate.next_to(vol_over_vol_text[0],RIGHT, buff=MED_SMALL_BUFF),
+                            (FadeOut(frac_line))
                             ), runtime=2)
                             
   
@@ -417,13 +522,13 @@ class MonteCarlo3D(ThreeDScene):
                 ReplacementTransform(pts_over_pts[0][13:21], initial_nums_all_zeros[0][3]),
                 ReplacementTransform(pts_over_pts[0][21:-1], initial_nums_all_zeros[0][5]),
                 ReplacementTransform(pts_over_pts[0][-1], initial_nums_all_zeros[0][6]),
-                FadeOut(vol_over_vol_text[1][0]),
+                FadeOut(vol_over_vol_text[0][0]),
                 FadeOut(vol_over_vol_text[0][29]),
                 FadeIn(approx.next_to(initial_nums_all_zeros[0][7], LEFT, buff=MED_SMALL_BUFF)),
                 FadeIn(initial_nums_all_zeros[0][7:]),
                 FadeIn(initial_nums_all_zeros[0][4]),
                 cdot.animate.next_to(initial_nums_all_zeros, LEFT, buff=SMALL_BUFF*1.7),
-                vol_over_vol_text[2][0].animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
+                vol_over_vol_den_6.animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
                 # vol_over_vol[0][-1].animate.next_to(initial_nums_all_zeros[0][6]),
                 )
         
