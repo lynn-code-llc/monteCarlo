@@ -9,7 +9,7 @@ class MonteCarlo2D(ThreeDScene):
         
         start_time = time.time()
 
-        num_of_points = 1
+        num_of_points = 10000
 
         opening_text = Text('Monte Carlo Simulations are a broad class of computational algorithms \nthat rely on repeated random sampling to obtain numerical results.',font_size=30)
         opening_text1 = Text('The underlying concept is to use randomness to solve problems \n that might be deterministic in principle.',font_size=30)
@@ -213,7 +213,7 @@ class MonteCarlo3D(ThreeDScene):
 
     def construct(self):
 
-        num_of_points = 1
+        num_of_points = 10000
 
         circle = Circle(radius=2)
         square = Square(side_length=4, color=BLUE_C).move_to(circle)
@@ -257,7 +257,7 @@ class MonteCarlo3D(ThreeDScene):
                     vol_over_vol_den_6,
                     vol_over_vol_text,
                     frac_line)
-        eq.shift(RIGHT*3.2)
+        eq.shift(RIGHT*2.7)
 
         cdot = MathTex('\cdot').next_to(vol_over_vol_text,LEFT, buff=SMALL_BUFF)
         ################################################################################################################################################
@@ -382,7 +382,7 @@ class MonteCarlo3D(ThreeDScene):
                 all_values.add(VGroup(Integer(sphere_count, color=RED),
                                       Integer(sphere_count, color=RED),
                                       Integer(cube_count, color=BLUE),
-                                      DecimalNumber(8 * ratio, num_decimal_places=4, color=YELLOW)))
+                                      DecimalNumber(6 * ratio, num_decimal_places=4, color=YELLOW)))
             return (dots_3d, all_values)
 
         
@@ -450,7 +450,8 @@ class MonteCarlo3D(ThreeDScene):
         self.play(Indicate(vol_over_vol_num_43pi[0][0:3]))
         self.wait(1)
         self.play(ReplacementTransform(vol_over_vol_num_43pi, vol_over_vol_num_4pi),
-                  ReplacementTransform(vol_over_vol_den_8,vol_over_vol_den_3x8))
+                  FadeOut(vol_over_vol_den_8),
+                  FadeIn(vol_over_vol_den_3x8))
         self.wait(1)
         self.play(Create(cancel_num_4),Create(cancel_den_8))
         self.wait(1)
@@ -524,6 +525,7 @@ class MonteCarlo3D(ThreeDScene):
                 ReplacementTransform(pts_over_pts[0][-1], initial_nums_all_zeros[0][6]),
                 FadeOut(vol_over_vol_text[0][0]),
                 FadeOut(vol_over_vol_text[0][29]),
+                FadeOut(vol_over_vol_num_pi),
                 FadeIn(approx.next_to(initial_nums_all_zeros[0][7], LEFT, buff=MED_SMALL_BUFF)),
                 FadeIn(initial_nums_all_zeros[0][7:]),
                 FadeIn(initial_nums_all_zeros[0][4]),
@@ -552,12 +554,12 @@ class MonteCarlo3D(ThreeDScene):
                                 ShowIncreasingSubsets(points3d),
                                 ShowSubmobjectsOneByOne(values3d), run_time=10)
         
+        self.play(FadeOut(radius, radius_copy, reverse_line, ref_line, r, two_r))
         self.play(LaggedStart(a, Write(explanation_5), lag_ratio=0.3))
 
-        self.wait()
+        self.wait(5)
         self.play(FadeOut(*self.mobjects))
         self.wait()
-
         
         # self.play(ShowIncreasingSubsets(gen_3d_points().shift(LEFT*2)
         self.wait()
