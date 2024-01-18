@@ -11,10 +11,6 @@ class MonteCarlo2D(ThreeDScene):
 
         num_of_points = 10000
 
-        opening_text = Text('Monte Carlo Simulations are a broad class of computational algorithms \nthat rely on repeated random sampling to obtain numerical results.',font_size=30)
-        opening_text1 = Text('The underlying concept is to use randomness to solve problems \n that might be deterministic in principle.',font_size=30)
-        
-
         circle = Circle(radius=2)
         square = Square(side_length=4, color=BLUE_C).move_to(circle)
         
@@ -28,7 +24,6 @@ class MonteCarlo2D(ThreeDScene):
         promo[1][9:27].set_color(YELLOW)
 
         radius = Line(circle.get_center(), circle.get_edge_center(RIGHT))
-        radius_copy = radius.copy()
         r = MathTex('r').next_to(radius, UP)
         ref_line = Line(circle.get_edge_center(DOWN), circle.get_corner(DR)).shift(DOWN*MED_SMALL_BUFF)
         reverse_line = Line(circle.get_edge_center(DOWN), circle.get_corner(DL)).shift(DOWN*MED_SMALL_BUFF)
@@ -37,13 +32,9 @@ class MonteCarlo2D(ThreeDScene):
         line_group = VGroup(radius,r,ref_line,reverse_line,two_r)
         approx_equal = MathTex(r'\approx')
 
-        sphere = Sphere(radius=2, fill_opacity=0.1).set_color(RED).rotate(90 * DEGREES, axis=RIGHT, about_point=ORIGIN)
-        cube = Cube(side_length=4, fill_opacity=0.1, stroke_width=1, stroke_color=BLUE_C)
-
         shapes = VGroup(circle, square)
 
         tex1 = MathTex(r'\left(\frac{\text {area of circle}}{\text {area of square}}\right)=', r'\frac{\pi r^{2}}{',r'(2 r)^{2}}')
-        # tex1.next_to(square, buff=LARGE_BUFF,aligned_edge=UP)
         tex1.shift(RIGHT*3)
         tex2 = MathTex(r'\left(\frac{\text {area of circle}}{\text {area of square}}\right)=', r'\frac{\pi r^{2}}{',r'4 r^{2}}')
         black_square = Square(0.6, 
@@ -104,7 +95,6 @@ class MonteCarlo2D(ThreeDScene):
         self.play(shapes.animate.shift(LEFT*3),
                     line_group.animate.shift(LEFT*3))                                
         self.play(FadeOut(explanation_1))
-        # self.add_fixed_in_frame_mobjects(tex1)
         self.play(Write(tex1))
         self.wait()
         self.play(Write(explanation_2))
@@ -178,7 +168,6 @@ class MonteCarlo2D(ThreeDScene):
         self.play(LaggedStart(a, Write(explanation_5), lag_ratio=0.3))
 
         self.wait(2)
-        # self.play(FadeOut(explanation_5, nums, cdot,  tex1[0][-1] ))
 
         points_and_shapes = AnimationGroup(points.animate.shift(RIGHT*3),
                                            shapes.animate.shift(RIGHT*3))
@@ -197,11 +186,6 @@ class MonteCarlo2D(ThreeDScene):
             points_and_shapes, 
             FadeOut(points),lag_ratio=0.6),          
         run_time=2)
-
-        # self.play(FadeOut(points))
-
-        # mobjects_not_fading = VGroup(points, shapes)
-        # self.play(FadeOut(self.mobjects - mobjects_not_fading))
   
         self.wait()
 
@@ -338,23 +322,12 @@ class MonteCarlo3D(ThreeDScene):
         two_r = MathTex('2r').move_to(circle.get_edge_center(DOWN)).shift(DOWN*MED_LARGE_BUFF)
 
         radius_copy = radius.copy()
-        line_group = VGroup(radius,r,ref_line,reverse_line,two_r)
 
         sphere = Sphere(radius=2, fill_opacity=0.1).set_color(RED).rotate(90 * DEGREES, axis=RIGHT, about_point=ORIGIN)
         cube = Cube(side_length=4, fill_opacity=0.1, stroke_width=1, stroke_color=BLUE_C)
 
         shapes = VGroup(circle, square)
-
-        # tex1.next_to(square, buff=LARGE_BUFF,aligned_edge=UP)
-        # vol_over_vol.shift(RIGHT*3)
-        # black_square = Square(0.6, 
-        #                         color=BLACK,         
-        #                     fill_opacity=1).next_to(vol_over_vol, RIGHT)
-        # vol_over_vol_simplified.move_to(vol_over_vol)
-
-        # zeros = np.zeros((num_of_points, 1))
         positions_3d = square.side_length * np.random.random_sample((num_of_points, 3)) - square.side_length / 2
-        # positions_3d = np.append(positions_3d, zeros, axis=1)
         
         dots_3d = VGroup()
         all_values = VGroup()
@@ -401,7 +374,6 @@ class MonteCarlo3D(ThreeDScene):
         self.wait()
         self.play(FadeOut(explanation_1))
 
-        # self.move_camera(phi=-30 * DEGREES, theta=-160 * DEGREES, gamma=-90 * DEGREES) 
         self.move_camera(phi=-40 * DEGREES, theta=-160 * DEGREES, gamma=-80 * DEGREES) 
         
         self.play(Create(sphere))
@@ -411,14 +383,10 @@ class MonteCarlo3D(ThreeDScene):
                 GrowFromCenter(cube[3]),
                 GrowFromCenter(cube[4]),
                 GrowFromCenter(cube[5]))
-        # self.add_fixed_in_frame_mobjects(vol_over_vol,explanation,explanation_2,explanation_3,explanation_4, line1, line2, cdot)
-        # self.remove(vol_over_vol, explanation,explanation_2,explanation_3,explanation_4, line1, line2, cdot)
+
         self.wait()
         self.move_camera(zoom=0.9,frame_center=[4.5,1.5,-1.5]) #x=4,y=0.7
-        # self.play(cube.animate.shift(OUT*3*LEFT))
 
-
-        # self.play(cube.animate.shift(OUT * LEFT * 20))
         self.play(Write(vol_over_vol_text))
         self.play(Write(vol_over_vol_num_43pir3))
         self.play(Write(frac_line))
@@ -427,10 +395,6 @@ class MonteCarlo3D(ThreeDScene):
         self.play(Write(explanation_2))
         self.wait()
         self.play(FadeOut(explanation_2))
-
-        # self.add_fixed_in_frame_mobjects(black_square)
-        # self.remove(black_square)  
-
                          
         self.play(AnimationGroup(Indicate(vol_over_vol_den_2r3[0][0]),
                                 Indicate(vol_over_vol_den_2r3[0][3]),
@@ -464,7 +428,6 @@ class MonteCarlo3D(ThreeDScene):
         self.play(ReplacementTransform(vol_over_vol_den_3x2, vol_over_vol_den_6))
         self.wait(1) 
 
-
         # Animate 6 to left side of equation.
         # Fade in cdot
         # Animate pi to right of equation
@@ -482,23 +445,10 @@ class MonteCarlo3D(ThreeDScene):
         self.play(Write(explanation_3))
         self.wait(2)
         self.play(FadeOut(explanation_3))
-        # self.add_fixed_in_frame_mobjects(pts_over_pts.shift(RIGHT))
-        # self.add_fixed_in_frame_mobjects(approx_equal.next_to(pts_over_pts, buff=SMALL_BUFF))
-        # self.remove(pts_over_pts, approx_equal)
-
 
         approx = MathTex(r'\approx')
         self.add_fixed_in_frame_mobjects(approx.next_to(pts_over_pts))
         self.remove(approx)
-        # self.remove(approx)
-        
-        # # THIS IS WHERE I AM GOING WRONG
-        # self.play(FadeOut(vol_over_vol[0]),
-        #           FadeIn(pts_over_pts),
-        #         #   vol_over_vol[1][0].animate.next_to(vol_over_vol[0][-1]),
-        #           FadeIn(approx)
-        #          )
-        
    
         self.play(ReplacementTransform(vol_over_vol_text[0][0],pts_over_pts[0][0]),
                   ReplacementTransform(vol_over_vol_text[0][1:15], pts_over_pts[0][1:12]),
