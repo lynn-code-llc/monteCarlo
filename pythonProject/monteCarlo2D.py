@@ -209,7 +209,7 @@ class MonteCarlo3D(ThreeDScene):
         explanation_4 = MathTex(r'\text{Evaluating the full expression allows us to approximate } \pi!').next_to(circle, UP*3)
         explanation_5 = Paragraph('The more points we plot \n the more accurate our approximation becomes!', font_size=30, alignment='center').next_to(circle,UP*3)
 
-        ## Equations and their simplifications ########################################################################################################
+        # Equations and their simplifications 
 
         vol_over_vol_text = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=')
 
@@ -244,12 +244,10 @@ class MonteCarlo3D(ThreeDScene):
         eq.shift(RIGHT*2.7)
 
         cdot = MathTex('\cdot').next_to(vol_over_vol_text,LEFT, buff=SMALL_BUFF)
-        ################################################################################################################################################
 
         initial_nums_all_zeros = MathTex(r'\left(\,\frac{\qquad0\qquad}{0\,\,\,\,+\,\,\,0}\,\right) 0.0000').next_to(cdot, RIGHT)
         pts_over_pts = MathTex(r'\left(\frac{\text {pts in sphere}}{\text {total pts in cube}}\right)',                                                            
                             font_size=48).next_to(cdot, buff=SMALL_BUFF)
-        # vol_over_vol_simplified = MathTex(r'\left(\frac{\text {volume of sphere}}{\text {volume of cube}}\right)=', r'\frac{\pi r^{3}}{',r'8 r^{3}}').move_to(vol_over_vol_text)
         
         cancel_num_r = Line(vol_over_vol_num_43pir3[0][5].get_corner(UR), vol_over_vol_num_43pir3[0][4].get_corner(DL), color=YELLOW)
         cancel_den_r = Line(vol_over_vol_den_8r3[0][2].get_corner(UR), vol_over_vol_den_8r3[0][1].get_corner(DL), color=YELLOW)
@@ -437,7 +435,6 @@ class MonteCarlo3D(ThreeDScene):
                             (FadeOut(frac_line))
                             ), runtime=2)
                             
-  
         self.wait()
         pts_over_pts[0][1:12].set_color(RED)
         pts_over_pts[0][13:-1].set_color_by_gradient(RED,BLUE)
@@ -464,9 +461,6 @@ class MonteCarlo3D(ThreeDScene):
         initial_nums_all_zeros[0][5].set_color(BLUE)
         initial_nums_all_zeros[0][7:].set_color(YELLOW).shift(RIGHT*0.6)
 
-        # self.add_fixed_in_frame_mobjects(initial_nums_all_zeros.shift(RIGHT))
-        # self.remove(initial_nums_all_zeros)
-
         self.play(ReplacementTransform(pts_over_pts[0][0], initial_nums_all_zeros[0][0]),
                 ReplacementTransform(pts_over_pts[0][1:12], initial_nums_all_zeros[0][1]),
                 ReplacementTransform(pts_over_pts[0][12], initial_nums_all_zeros[0][2]),
@@ -480,8 +474,7 @@ class MonteCarlo3D(ThreeDScene):
                 FadeIn(initial_nums_all_zeros[0][7:]),
                 FadeIn(initial_nums_all_zeros[0][4]),
                 cdot.animate.next_to(initial_nums_all_zeros, LEFT, buff=SMALL_BUFF*1.7),
-                vol_over_vol_den_6.animate.next_to(cdot, LEFT, buff=SMALL_BUFF),
-                # vol_over_vol[0][-1].animate.next_to(initial_nums_all_zeros[0][6]),
+                vol_over_vol_den_6.animate.next_to(cdot, LEFT, buff=SMALL_BUFF)
                 )
         
         self.play(Write(explanation_4))
@@ -509,11 +502,7 @@ class MonteCarlo3D(ThreeDScene):
 
         self.wait(5)
         self.play(FadeOut(*self.mobjects))
-        self.wait()
-        
-        # self.play(ShowIncreasingSubsets(gen_3d_points().shift(LEFT*2)
-        self.wait()
-
+        self.wait(2)
 class CombinedScene(ThreeDScene):
         def construct(self):
             MonteCarlo2D.construct(self)
